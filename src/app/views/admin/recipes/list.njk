@@ -1,0 +1,44 @@
+{% extends "admin/layout.njk" %}
+
+
+{% block head %}
+    <title>Foodfy - Admin</title>
+    <link rel="stylesheet" href="/css/recipes.css">
+    <link rel="stylesheet" href="/css/paginate.css">
+{% endblock %} 
+
+
+{% block content %}   
+
+    <div class="content-box">
+        <div class="header-box">
+            <h2>Gerenciar Receitas</h2>
+            <div>
+                <a href="/admin/recipes/myrecipes?byUser=true" class="button">Minhas Receitas</a>
+                <a href="/admin/recipes/create" class="button" >Criar Receita</a>
+                <input type="hidden" name="byUser">
+            </div>
+        </div>
+        
+
+        <div class="admin-cards">
+            {% for recipe in recipes %}
+            <div class="admin-card">
+                <img src="{{files[loop.index0].src}}" alt="">
+                <div>
+                    <h4>{{recipe.title}}</h4>
+                    <small>Por {{chef.name}}</small>
+                    <a href="/admin/recipes/{{recipe.id}}">Visualizar</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="pagination" data-page={{pagination.page}} data-total={{pagination.total}} data-filter={{filter}}></div>
+
+    </div>
+
+<script src="/js/paginate.js"></script>
+<script src="/js/admin/recipes/byUser.js"></script>
+
+{% endblock %} 

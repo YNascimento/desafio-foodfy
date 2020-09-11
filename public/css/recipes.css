@@ -1,0 +1,36 @@
+/* HOME RECIPES */
+.receitas{
+    position: relative;
+    padding: 40px 0 60px;
+}
+
+/* ADMIN RECIPES*/
+.content-box{
+    display: block;
+    box-sizing: border-box;
+    margin: 32px 0;
+    color: #111111;
+}
+
+.header-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.header-box div{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: right;
+    align-self: center;
+}
+.header-box div a{
+    text-align: center;
+    margin-left: 2%;
+}
+
+.content-box h2{
+    margin: 16px 0;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 28px;
+}

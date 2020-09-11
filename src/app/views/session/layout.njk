@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/session.css">
+    <link rel="stylesheet" href="/css/default.css">
+    {% block head%}
+
+    <title>Foodfy</title>
+    
+    {% endblock %}
+
+</head>
+<body>
+    {% include "messages.njk"%}
+
+    <section class="container">
+        <aside></aside>
+
+        <div class="content">
+            <header>
+                <nav class="navbar">
+                    <a href="/"><span class="logo"><img src="/std_imgs/logo.png" alt=""></span></a>
+                </nav>
+            </header>
+
+            <main>
+                {% block content %}
+
+                {% endblock %}
+            </main>
+        </div>
+
+        <aside></aside> <!-- coluna lateral vazia -->
+    </section>
+
+    <footer>
+        <p class="footer-text">Todos direitos reservados, receitas Foodfy</p>
+    </footer>
+</body>
+
+<script src="/js/validate.js"></script>
+
+</html>

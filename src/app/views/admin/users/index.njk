@@ -1,0 +1,27 @@
+{% extends "admin/layout.njk" %}
+
+{% block head %}
+
+    <title>Admin - {{user.name}}</title>
+    <link rel="stylesheet" href="/css/userCreateEdit.css">
+    <link rel="stylesheet" href="/css/user.css">
+
+{% endblock %} 
+
+{% block content %}
+
+    <form class="create-content" action="/admin/users/profile?_method=PUT" method="post">
+        <section class="header-box">
+            <h3>Bem Vindo {{user.name}}</h3>
+            <div>
+                <button class="button" type="submit">Salvar</button>
+            </div>
+        </section>
+
+        <section class="form-box">
+            {% include 'admin/users/index-fields.njk'%}
+            <input type="hidden" name="id" value={{user.id}}>
+        </section>
+    </form>
+
+{% endblock %} 

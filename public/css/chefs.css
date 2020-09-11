@@ -1,0 +1,79 @@
+/* ADMIN CHEFS */
+.content-box{
+    display: block;
+    box-sizing: border-box;
+    margin: 32px 0;
+    color: #111111;
+}
+
+.header-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.header-box div{
+    justify-self: right;
+    align-self: center;
+}
+
+.content-box h2{
+    margin: 16px 0;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 28px;
+}
+
+
+/* CHEF CARDS*/
+.cards{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.card{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 16px 0;
+    align-items: center;
+}
+
+.card img{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    justify-self: center;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.card h4{
+    font-size: 18px;
+    line-height: 21px;
+    font-weight: 400;
+    margin-bottom: 12px;
+}
+
+.card small{
+    font-size: 14px;
+    font-weight: 400;
+    color: #777777;
+    margin: 2% 0 4%;
+    display: block;
+}
+
+.card a{
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    color: #6558c3;
+    text-decoration: none;
+    padding: 2px 4px;
+    border: 1px solid transparent;
+}
+.card a:hover{
+    color: #423892;
+    border: 1px solid #423892;
+    border-radius: 4px;
+}
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/layoutAdmin.css">
+    <link rel="stylesheet" href="/css/default.css">
+    <script src="https://kit.fontawesome.com/b5d13338b5.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% block head%}
+
+    <title>Foodfy</title>
+    
+    {% endblock %}
+
+</head>
+<body>
+    {% include "messages.njk"%}
+
+    <header class="container">
+        <aside></aside>
+        <nav class="navbar">
+            <a href="/"><span class="logo"><img src="/std_imgs/logo2.png" alt=""></span></a>
+            <a class="navbar-links" href="/admin/recipes">Receitas</a>
+            <a class="navbar-links" href="/admin/chefs">Chefs</a>
+            {% if isAdmin %}
+            <a class="navbar-links" href="/admin/users">Usuários</a>
+            {% else %}
+            <a class="navbar-links" href="/admin/users/profile">Perfil</a>
+            {% endif %}
+            <form action="/admin/users/logout" method="post">
+                <button type="submit">SAIR</button>
+            </form>
+        </nav>
+        <aside></aside>
+    </header>
+
+    <section class="container">
+        
+        <aside></aside><!-- coluna lateral vazia -->
+        <div class="content">
+            <main>
+            {% block content %}
+
+            {% endblock %}
+            </main>
+        </div>
+        <aside></aside> <!-- coluna lateral vazia -->
+    </section>
+
+    <footer>
+        <p class="footer-text">Todos direitos reservados, receitas Foodfy</p>
+    </footer>
+</body>
+
+<script src="/js/validate.js"></script>
+
+</html>

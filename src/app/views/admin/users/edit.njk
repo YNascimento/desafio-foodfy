@@ -1,0 +1,31 @@
+{% extends "admin/layout.njk" %}
+
+{% block head %}
+
+    <title>Admin - Editar Usuário</title>
+    <link rel="stylesheet" href="/css/userCreateEdit.css">
+
+{% endblock %} 
+
+{% block content %}
+
+    <form class="delBtn-box" action="/admin/users?_method=DELETE" method="post">
+        <input type="hidden" name="id" value={{user.id}}>
+        <div><button class="button delBtn" type="submit">Deletar</button></div>
+    </form>
+
+    <form class="create-content" action="/admin/users/{{user.id}}/edit?_method=PUT" method="post">
+        <section class="header-box">
+            <h3>Editando Usuário</h3>
+            <div>
+                <input type="hidden" name="id" value={{user.id}}>
+                <button class="button" type="submit">Salvar</button>
+            </div>
+        </section>
+
+        <section class="form-box">
+            {% include 'admin/users/create-edit-fields.njk'%}
+            <input type="hidden" name="id" value={{user.id}}>
+        </section>
+    </form>
+{% endblock %} 

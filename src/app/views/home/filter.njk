@@ -1,0 +1,25 @@
+{% extends "home/layout.njk" %}
+
+{% block head %}
+    <title>Foodfy - Receitas</title>
+    <link rel="stylesheet" href="/css/paginate.css">
+{% endblock %} 
+
+{% block content %}
+    <h2 class="card-titulo">Buscando por "{{filter}}"</h2>
+    <div class="receitas">                
+        <div class="cards">
+        {%for recipe in recipes %}
+            <div class="card" id="{{recipe.id}}">
+                <img class="card-img" src="{{files[loop.index0].src}}" alt="{{recipe.title}}">
+                <h4 class="card-titulo">{{recipe.title}}</h4>
+                <small class="card-autor">por {{recipe.chef_name}}</small>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination" data-page={{pagination.page}} data-total={{pagination.total}} data-filter={{filter}}></div>
+
+<script src="/js/paginate.js"></script>
+<script src="/js/home/recipes.js"></script>
+{% endblock %} 

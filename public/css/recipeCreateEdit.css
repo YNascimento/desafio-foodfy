@@ -1,0 +1,134 @@
+.create-content{
+    box-sizing: border-box;
+    margin: 2% 0;
+    color: #111111;
+    background-color: #ffffff;
+    margin-bottom: 60px;
+}
+
+.create-content section{
+    margin: 2% 0 2%;
+    box-sizing: border-box;
+}
+
+
+.header-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 4%;
+}
+
+.header-box h3{
+    font-size: 24px;
+    line-height: 28px;
+}
+
+.header-box div{
+    justify-self: right;
+}
+
+.delBtn-box{
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 20px 0;
+}
+
+.delBtn-box div{
+    text-align: right;
+}
+
+.delBtn{
+    background-color: #dc4747;
+}
+
+/* FIELDS */
+#preparations, #ingredients{
+    display: inline-block;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.ingredient, .preparation{
+    margin: 4px 0;
+    position: relative;
+}
+
+.ingredient span, .preparation span{
+    position: absolute;
+    right: 0;
+    top:10px;
+    cursor: pointer;
+}
+
+/* PHOTO UPLOAD*/
+.input-box .photo-box{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    gap: 4px;
+}
+
+.input-box .photo-upload{
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+}
+
+.input-box .photo-upload i{
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.input-box #photo-input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.input-box #photo-preview{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+}
+
+.input-box #photo-preview img{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.input-box #photo-preview .photo{
+    position: relative;
+}
+
+.input-box #photo-preview .photo i{
+    position: absolute;
+    top: 0; left: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: red;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.2s;
+}
+.input-box #photo-preview .photo:hover i{
+    opacity: 1;
+}

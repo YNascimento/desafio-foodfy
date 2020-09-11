@@ -1,0 +1,69 @@
+{% extends "admin/layout.njk" %}
+
+{% block head %}
+
+    <title>{{recipe.title}}</title>
+    <link rel="stylesheet" href="/css/show.css">
+
+{% endblock %} 
+
+{% block content %}
+    <div class="details-container">
+        <div class="edit-box">
+            <h2 class="details-h2">Receita: {{recipe.title}}</h2>
+            <div>
+                {% if isAdmin or owner %}
+                <a class="button" href="/admin/recipes/{{recipe.id}}/edit">Editar Receita</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="presentation-box">
+            <div class="highlight">
+                {% if not files[0] %}
+                    <img class="presentation-img" src="http://placehold.it/600x300?text=SEM FOTO">
+                {%else%}
+                    <img class="presentation-img" src="{{files[0].src}}" alt="{{recipe.title}}">
+                {%endif%}
+            </div>
+            <div class="gallery-preview">
+                {%for image in files %}
+                    {# loop.index começa do 1, loop.index0 começa do 0, checa se é primeira img #}
+                    <img src="{{image.src}}" alt="{{image.name}}" 
+                        {% if loop.first %} class="active" {% endif %}
+                        onclick="imageGallery.setImage(event)">
+                {%endfor%}
+            </div>
+            
+            <h1 class="details-h1">{{recipe.title}}</h1>
+            <small class="presentation-author">por {{recipe.chef_name}}</small>
+        </div>
+        
+        <div class="details-box">
+            <h2 class="details-h2">Ingredientes</h2>
+            <ul id="details-ul" class="details-list">
+                {%for ingredient in recipe.ingredients %}
+                    <li>- {{ingredient}}</li>
+
+                {% endfor %}
+            </ul>   
+        </div>
+
+        <div class="details-box">
+            <h2 class="details-h2">Modo de Preparo</h2>
+            <ul id="details-ul" class="details-list">
+                {%for preparation in recipe.preparation %}
+                    <li>- {{preparation}}</li>
+
+                {% endfor %}
+            </ul>   
+        </div>
+
+        <div class="details-box">
+            <h2 class="details-h2">Informações Adicionais</h2>
+            <p id="extrainfo-p" class="details-p">{{recipe.information}}</p>
+        </div>
+    </div>
+
+<script src="/js/admin/recipes/show.js"></script>
+{% endblock %} 

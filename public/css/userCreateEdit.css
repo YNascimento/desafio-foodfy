@@ -1,0 +1,54 @@
+.create-content{
+    box-sizing: border-box;
+    margin: 2% 0;
+    color: #111111;
+    background-color: #ffffff;
+    margin-bottom: 60px;
+}
+
+.create-content section{
+    margin: 2% 0 2%;
+    box-sizing: border-box;
+}
+
+
+.header-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 4%;
+}
+
+.header-box h3{
+    font-size: 24px;
+    line-height: 28px;
+}
+
+.header-box div{
+    justify-self: right;
+    text-align: right;
+}
+
+.header-box div button{
+    margin-left: 10px;
+}
+
+/* FIELDS */
+.form-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5%;
+    justify-content: right;
+}
+
+.form-box .input-box{
+    margin: 24px 0 4px;
+} 
+
+.form-box .input-box .input-title{
+    display: inline-block;
+}
+
+.input-box input[name="isAdmin"]{
+    width: auto;
+
+}

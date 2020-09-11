@@ -1,0 +1,23 @@
+{% extends "session/layout.njk" %}
+
+{% block head %}
+    <title>Foodfy - Login</title>
+{% endblock %} 
+
+
+{% block content %}
+
+<form action="/admin/users/login" method="post">
+    <h2>Iniciar Sessão</h2>
+
+    <div class="fields">
+        {% include 'session/login-fields.njk'%}
+    </div>
+
+    <div class="form-footer">
+        <a href="/admin/users/forgot-password">Perdeu a senha?</a>
+        <button class="button" type="submit">Entrar</button>
+    </div>
+
+</form>
+{% endblock %} 

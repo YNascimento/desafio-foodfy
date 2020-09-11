@@ -1,0 +1,26 @@
+{% extends "admin/layout.njk" %}
+
+{% block head %}
+
+    <title>Admin - Novo Usuário</title>
+    <link rel="stylesheet" href="/css/userCreateEdit.css">
+
+{% endblock %} 
+
+{% block content %}
+
+    <form class="create-content" action="/admin/users" method="post">
+        <section class="header-box">
+            <h3>Criar Usuário</h3>
+            <div>
+                <button class="button" type="submit">Salvar</button>
+                <a href="/admin/users" class="button cancelBtn">Cancelar</a>
+            </div>
+        </section>
+
+        <section class="form-box">
+            {% include 'admin/users/create-edit-fields.njk'%}
+        </section>
+    </form>
+
+{% endblock %} 

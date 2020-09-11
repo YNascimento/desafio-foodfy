@@ -1,0 +1,27 @@
+{% extends "admin/layout.njk" %}
+
+{% block head %}
+
+    <title>Admin - Nova Receita</title>
+    <link rel="stylesheet" href="/css/chefCreateEdit.css">
+
+{% endblock %} 
+
+{% block content %}
+
+    <form class="create-content" action="/admin/chefs" method="post" enctype="multipart/form-data">
+        <section class="header-box">
+            <h3>Criando Chef</h3>
+            <div>
+                <button class="button" type="submit">Salvar Chef</button>
+            </div>
+        </section>
+
+        <section class="form-box">
+            {% include 'admin/chefs/fields.njk'%}
+        </section>
+    </form>
+
+<script src="/js/admin/chefs/fields.js"></script>
+
+{% endblock %} 
