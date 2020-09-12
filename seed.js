@@ -1,39 +1,50 @@
 const User = require('./src/app/models/User')
+const Recipe = require('./src/app/models/Recipe')
 const Chef = require('./src/app/models/Chef')
 const File = require('./src/app/models/File')
 const Recipe_File = require('./src/app/models/Recipe_File')
 
 const { hash } = require("bcryptjs")
 const faker = require('faker')
-const { finished } = require('nodemailer/lib/xoauth2')
 
 let totalUsers = 5,
     totalChefs = 3,
-    totalRecipes = 10,
+    totalRecipes = 3,
     totalRecipeFiles = 5
     
 async function createFiles(name, quantity, recipeId){
     let files = []
 
-    while(files.length < quantity){
-        files.push({
-            name: faker.image.image(),
-            path: `public/images/${name}.png`,
-            recipe_id: recipeId != null ? recipeId : "", //chef_file doesn't use recipe_id
-        })
+    if(recipeId){
+        while(files.length < quantity){
+            files.push({
+                name: faker.image.image(),
+                path: `public/img/${name}.png`,
+                recipe_id: recipeId
+            })
+        }
+    }
+    else{
+        while(files.length < quantity){
+            files.push({
+                name: faker.image.image(),
+                path: `public/img/${name}.png`
+            })
+        }
     }
 
     const filesPromise = files.map(file => File.create(file))
-    await Promise.all(filesPromise)
+    let results = await Promise.all(filesPromise)
+    return results
 }
 
 async function fillRecipeFileTable(recipeId){
+    
+    const files = await File.findAll({where: {recipe_id: recipeId} })
 
-    const fileIds = await File.findAll({where: {recipe_id: recipeId} })
-
-    recipeFilePromise = fileIds.map(file_id => Recipe_File.create({
+    recipeFilePromise = files.map(file => Recipe_File.create({
         recipe_id: recipeId,
-        file_id
+        file_id: file.id
     }))
     const recipeFilesIds = await Promise.all(recipeFilePromise)
 }
@@ -48,20 +59,18 @@ async function createUsers(){
             name: faker.name.firstName(),
             email: faker.internet.email(),
             password,
-            isAdmin: Math.round(Math.random())
+            is_admin: Math.round(Math.random())
         })
     }
 
-    const usersPromise = users.map(user => user.create(user))
+    const usersPromise = users.map(user => User.create(user))
     const usersIds = await Promise.all(usersPromise)
 }
 
 async function createChefs(){
-    
-    const filesIds = await createFiles('chef', 3, null)
-    
-    const chefs =[]
 
+    const filesIds = await createFiles('chef', 3)
+    const chefs =[]
     while(chefs.length < totalChefs){
         
         chefs.push({
@@ -81,19 +90,20 @@ async function createRecipes(){
     //generates recipes
     while(recipes.length < totalRecipes){
         
+        let ingredients = []
+
         recipes.push({
-            name: faker.name.firstName(),
             chef_id: Math.ceil(Math.random() * totalChefs),
             title: faker.commerce.product(),
-            ingredients: faker.lorem.paragraph(Math.ceil(Math.random)*5),
-            preparation: faker.lorem.paragraph(Math.ceil(Math.random)*5),
-            information: faker.lorem.paragraph(Math.ceil(Math.random)*5),
+            ingredients:`{"${faker.lorem.paragraph(1)}", "${faker.lorem.paragraph(1)}"}`,
+            preparation:`{"${faker.lorem.paragraph(1)}", "${faker.lorem.paragraph(1)}"}`,
+            information: faker.lorem.paragraph(Math.ceil(Math.random())*5),
             user_id: Math.ceil(Math.random() * totalUsers)
         })
     }
 
     //create Recipes
-    const recipesPromise = recipes.map(recipe => Chef.create(recipe))
+    const recipesPromise = recipes.map(recipe => Recipe.create(recipe))
     recipesIds = await Promise.all(recipesPromise)
 
     //create recipes' files
@@ -103,7 +113,6 @@ async function createRecipes(){
     //fill recipe_files table
     const recipeFileTablePromise = recipesIds.map(recipeId => fillRecipeFileTable(recipeId))
     const recipeFileTable = await Promise.all(recipeFileTablePromise)
-
 }
 
 async function init(){

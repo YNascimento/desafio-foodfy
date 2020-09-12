@@ -2,11 +2,11 @@ const db = require('../../config/db')
 
 function find(filters, orderBy, table){
 
-    let query = `SELECT * FROM ${table}`
+    let query = `SELECT * FROM ${table} `
 
     if(filters){
         Object.keys(filters).map(key => {
-            query += `${key}` //(query) + WHERE
+            query += `${key} ` //(query) + WHERE
     
             Object.keys(filters[key]).map(field => {
                 query += `${field} = '${filters[key][field]}'` // (query) + WHERE + name = 'jao'
@@ -37,7 +37,7 @@ const Base = {
             console.error(err)
         }
     },
-    async fildAll(filters, orderBy){
+    async findAll(filters, orderBy){
         try {
             const results = await find(filters, orderBy, this.table)
             return results.rows
@@ -84,3 +84,5 @@ const Base = {
         return db.query(`DELETE FROM ${this.table} WHERE id = $1`, [id])
     }
 }
+
+module.exports = Base
