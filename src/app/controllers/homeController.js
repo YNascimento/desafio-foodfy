@@ -4,9 +4,12 @@ const File = require('../models/File')
 
 module.exports = {
     async index(req,res){
+        //TROCAR RECIPE.HOME POR FINDALL E FAZER MAP PARA PEGAR APENAS 6 PRIMEIROS RESULTADOS
         let results = await Recipe.home()
         const recipes = results.rows
         const userId = req.session.userId
+
+        //PUXAR OS CHEF.NAMES 
 
         //array de promises para pegar imgs de receitas
         const filePromises = recipes.map(recipe => File.getFilesByRecipe(recipe.id))

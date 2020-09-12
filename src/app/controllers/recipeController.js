@@ -1,6 +1,8 @@
 const Recipe = require('../models/Recipe')
 const File = require('../models/File')
-const {date} = require('../../lib/util')
+
+const loadService = require('../services/loadService')
+
 
 module.exports = {
     async all(req,res){
@@ -23,26 +25,22 @@ module.exports = {
             page
         }
 
-        //array de promises para pegar imgs de receitas
-        const filePromises = recipes.map(recipe => File.getFilesByRecipe(recipe.id))
+        const filePromises = recipes.map(recipe => {loadService.getImages(recipe.id)})
+        const files = await Promise.all(filePromises)
 
-        await Promise.all(filePromises).then((values) => {
+        return res.render('admin/recipes/list', {recipes, pagination, filter, files, isAdmin})
 
-            const files = values.map(file => ({...file[0]}))
-            if(files){
-                if(typeof files[0] !== 'undefined' && typeof files[0].id !== 'undefined'){
-    
-                    const files2 = files.map(file => ({
-                        ...file,
-                        src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
-                    }))
-
-                    return res.render('admin/recipes/list', {recipes, pagination, filter, files: files2, isAdmin})
-                }
-
-                return res.render('admin/recipes/list', {recipes, pagination, filter, isAdmin})
-            }
-        })
+        // .then((values) => {
+        //     const files = values.map(file => ({...file[0]}))
+        //     if(files){
+        //         if(typeof files[0] !== 'undefined' && typeof files[0].id !== 'undefined'){
+        //             const files2 = files.map(file => ({
+        //                 ...file,
+        //                 src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
+        //             }))
+        //         }   
+        //     }
+        // })
     },
     async create(req,res){
         const isAdmin = req.session.isAdmin
@@ -58,16 +56,19 @@ module.exports = {
         let results = await Recipe.find(req.params.id)
         const recipe = results.rows[0]
 
+        //FAZER QUERY PARA PUXAR CHEF.NAME = RECIPE.CHEF_NAME
+
         if(!recipe) return res.send("Recipe not found")
 
         let owner = false //check if user created this recipe
         if(recipe.user_id == req.session.userId) 
             owner = true
 
-        results = await File.getFileIds(recipe.id)
-        const fileIds = results.rows
+        //TROCAR POR FIND ALL ONDE WHERE recipe_id = recipe.id
+        // results = await File.getFileIds(recipe.id)
+        // const fileIds = results.rows
 
-        const filesPromises = fileIds.map(id => File.getFiles(id.file_id))
+        // const filesPromises = fileIds.map(id => File.getFiles(id.file_id))
         await Promise.all(filesPromises).then((results) => {
 
             const files = results.map(file => ({
@@ -82,13 +83,16 @@ module.exports = {
 
         let results = await Recipe.find(req.params.id)
         const recipe = results.rows[0]
+        
+        //FAZER QUERY PARA PUXAR CHEF.NAME = RECIPE.CHEF_NAME
 
         if(!recipe) return res.send("Recipe not found")
 
         results = await Recipe.chefOptions()
         const options = results.rows
 
-        results = await File.getFilesByRecipe(req.params.id)
+        // BASE FIND ALL
+        // results = await File.getFilesByRecipe(req.params.id)
         const fileRows = results
 
         const files = fileRows.map(file => ({
@@ -122,7 +126,7 @@ module.exports = {
 
         //array de promises para insert de relação file->recipe
         const fileId = await results.map(file => file.rows[0].id)
-        const recipeFilePromises = fileId.map(id => File.indentifyFile(id,recipeId))
+        const recipeFilePromises = fileId.map(id => File.indentifyFile(id,recipeId)) //USAR BASE CREATE
         await Promise.all(recipeFilePromises)
 
         return res.redirect(`/admin/recipes/${recipeId}`)
@@ -139,7 +143,7 @@ module.exports = {
             let results = await Promise.all(newFilesPromise)
 
             const fileId = results.map(file => file.rows[0].id)
-            const recipeFilePromises = fileId.map(id => File.indentifyFile(id,req.body.id))
+            const recipeFilePromises = fileId.map(id => File.indentifyFile(id,req.body.id)) //USAR BASE CREATE
             await Promise.all(recipeFilePromises)
         }
         if(req.body.removed_files){
@@ -147,6 +151,9 @@ module.exports = {
             const lastIndex = removedFiles.length-1
 
             removedFiles.splice(lastIndex,1)
+
+            //CHECAR E REFAZER O UNLINK PARA O FILE
+            fs.unlinkSync(file.path)
 
             const removedFilesPromise = removedFiles.map(id => File.delete(id))
             await Promise.all(removedFilesPromise)

@@ -7,14 +7,14 @@
     <div class="input-title">Avatar</div>
     <div class="photo-box">
         <div class="photos-upload">
-            <input id="photos-input" type="file" name="photos" accepty="image/*" onchange="photosUpload.handleInput(event)">
+            <input id="photos-input" type="file" name="photo" accepty="image/*" onchange="photosUpload.handleInput(event)">
             <p>Enviar Avatar</p>
         </div>
         
         <div id="photo-preview">
             {% if chefFile %}
                 <div class="photo" id="{{chefFile.id}}">
-                    <img src="{{chefFile.src}}" alt="{{chefFile.name}}">
+                    <img src="{{chef.file.src}}" alt="{{chef.file.name}}">
                     <i class="material-icons" onclick="photosUpload.removeOldPhoto(event)">close</i>
                 </div>
                 <input type="hidden" name="removed_files">

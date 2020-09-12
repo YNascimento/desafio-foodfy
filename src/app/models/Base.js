@@ -1,16 +1,23 @@
 const db = require('../../config/db')
 
-function find(filters, table){
+function find(filters, orderBy, table){
 
     let query = `SELECT * FROM ${table}`
 
-    Object.keys(filters).map(key => {
-        query += `${key}` //(query) + WHERE
-
-        Object.keys(filters[key]).map(field => {
-            query += `${field} = '${filters[key][field]}'` // (query) + WHERE + name = 'jao'
+    if(filters){
+        Object.keys(filters).map(key => {
+            query += `${key}` //(query) + WHERE
+    
+            Object.keys(filters[key]).map(field => {
+                query += `${field} = '${filters[key][field]}'` // (query) + WHERE + name = 'jao'
+            })
         })
-    })
+    }
+
+    if(orderBy){
+        query += `ORDER BY ${orderBy}`
+    }
+
     return db.query(query)
 }
 
@@ -30,9 +37,9 @@ const Base = {
             console.error(err)
         }
     },
-    async fildAll(filters){
+    async fildAll(filters, orderBy){
         try {
-            const results = await find(filters, this.table)
+            const results = await find(filters, orderBy, this.table)
             return results.rows
 
         } catch (err) {

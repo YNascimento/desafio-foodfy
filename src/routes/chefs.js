@@ -1,7 +1,7 @@
 const express = require('express')
 const routes = express.Router()
 const multer = require('../app/middlewares/multer')
-const chefController = require('../app/controllers/chefControler')
+const chefController = require('../app/controllers/chefController')
 
 
 routes.get("/", chefController.index); // LIST
