@@ -1,6 +1,7 @@
 const Chef = require('../models/Chef')
 const File = require('../models/File')
 const Recipe = require('../models/Recipe')
+const Recipe_File = require('../models/Recipe_File')
 
 const fs = require('fs')
 
@@ -12,7 +13,7 @@ module.exports = {
         try {
             const isAdmin = req.session.isAdmin
     
-            let allChefs = await Chef.findAll(null, 'created_at DESC' ) // 1:1 para passar pelo map de Where
+            let allChefs = await Chef.findAll(null, 'created_at DESC' )
             chefsPromise = allChefs.map(async chef => {
     
                 chef.total_recipes = await Recipe.findAll({where: {chef_id: chef.id}})
@@ -54,7 +55,7 @@ module.exports = {
             chef.file = await File.find({where: {id: chef.file_id}})
             chef.file.src = `${req.protocol}://${req.headers.host}${chef.file.path.replace('public','')}`
     
-            //get img to all chef's recipes
+            //get imgs to all chef's recipes
             const filePromises = recipes.map(recipe => {loadService.getImages(recipe.id)})
             const recipeFiles = await Promise.all(filePromises)
     
@@ -67,7 +68,6 @@ module.exports = {
             const params = {page, limit, offset }
     
             const recipes = await Chef.recipesBy(chef.id, params) //recipes with pagination
-    
             const total_recipes = await Chef.totalRecipesByChef(chef.id)
     
             const pagination = {
@@ -128,11 +128,18 @@ module.exports = {
     
             const {name} = req.body
     
+            //create Chef file
             const fileId = await File.create({
                 name: req.files[0].name,
                 path: req.files[0].path
             })
+
+            //fill recipe_file table
+            await Recipe_File.create({
+                file_id: fileId
+            })
     
+            //create chef
             const chef = await Chef.create({
                 name,
                 file_id: fileId

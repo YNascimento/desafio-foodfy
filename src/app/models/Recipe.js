@@ -5,15 +5,8 @@ Base.init({ table:'recipes'}) //calls Base file parsing the reference table
 
 module.exports = {
     ...Base,
-    async chefOptions(){
-        try {
-            return await db.query(`SELECT name, id FROM chefs ORDER BY name ASC`)
-        } catch (err) {
-            console.error(err)
-        }
-    },
     async paginate(params){
-        const {filter, offset, limit, isBusca, byUser, userId} = params
+        const {filter, offset, limit, isBusca = null, byUser = null, userId} = params
 
         let query = "",
         filterQuery = "",
@@ -40,7 +33,8 @@ module.exports = {
             LIMIT $1 OFFSET $2`
         
         try {
-            return await db.query(query,[limit,offset])
+            let results = await db.query(query,[limit,offset])
+            return results.rows
         } catch (err) {
             console.error(err)
         }

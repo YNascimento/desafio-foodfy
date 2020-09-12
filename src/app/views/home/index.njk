@@ -25,7 +25,7 @@
             <div class="card" id="{{recipe.id}}">
                 <img class="card-img" src="{{files[loop.index0].src}}" alt="{{files[loop.index0].name}}">
                 <h4 class="card-titulo">{{recipe.title}}</h4>
-                <small class="card-autor">por {{recipe.chef_name}}</small>
+                <small class="card-autor">por {{chef.name}}</small>
             </div>
             {% endfor %}
         </div>

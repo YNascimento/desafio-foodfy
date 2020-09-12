@@ -1,8 +1,14 @@
 const crypto = require('crypto')
 const User = require("../models/User")
 const mailer = require('../../lib/mailer')
-const { reset } = require('browser-sync')
 const { hash } = require('bcryptjs')
+
+const forgot_email = (token) => `
+    <h2>Esqueceu a senha né meu filho?</h2>
+    <p> Eu te entendo. Toma aí um lik pra resolver seus problema: </p>
+    <p>
+        <a href="http://localhost:3002/admin/users/reset-password?token=${token}" target="_blank">Senha nova aqui com o pai</a>
+    </p>`
 
 module.exports = {
     loginForm(req,res){
@@ -21,35 +27,40 @@ module.exports = {
         return res.render('session/forgot-password')
     },
     async forgot(req,res){
-        const user = req.user
-        const token = crypto.randomBytes(20).toString("hex")
-
-        //token expira em 1h
-        let now = new Date()
-        now = now.setHours(now.getHours() +1)
-
-        //atualiza bd com token e hr de expiração para compare
-        await User.update(user.id,{
-            reset_token: token,
-            reset_token_expires: now
-        })
-
-        //enviar email com um link de recuperação
-        await mailer.sendMail({
-            to: user.email,
-            from: 'no-reply@launchstore.com.br',
-            subject: 'Recuperação de Senha',
-            html: `<h2>Esqueceu a senha né meu filho?</h2>
-            <p> Eu te entendo. Toma aí um lik pra resolver seus problema: </p>
-            <p>
-                <a href="http://localhost:3002/admin/users/reset-password?token=${token}" target="_blank">Senha nova aqui com o pai</a>
-            </p>`,
-        })
-
-        return res.render('session/forgot-password', {
-            user:req.body,
-            success: "Verifique seu email para renovar sua senha!"
-        })
+        try {
+            const user = req.user
+            const token = crypto.randomBytes(20).toString("hex")
+    
+            //token expira em 1h
+            let now = new Date()
+            now = now.setHours(now.getHours() +1)
+    
+            //atualiza bd com token e hr de expiração para compare
+            await User.update(user.id,{
+                reset_token: token,
+                reset_token_expires: now
+            })
+    
+            //enviar email com um link de recuperação
+            await mailer.sendMail({
+                to: user.email,
+                from: 'no-reply@launchstore.com.br',
+                subject: 'Recuperação de Senha',
+                html: forgot_email(token),
+            })
+    
+            return res.render('session/forgot-password', {
+                user:req.body,
+                success: "Verifique seu email para renovar sua senha!"
+            })
+            
+        } catch (err) {
+            console.error(err)
+            return res.render('session/forgot-password', {
+                user:req.body,
+                error: "Erro ao enviar e-mail com reset de senha!"
+            })
+        }
 
     },
     resetForm(req,res){

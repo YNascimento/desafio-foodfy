@@ -29,8 +29,8 @@
 
 <div class="input-box"> {# AUTHOR #}
     <div class="input-title">Chef</div>
-    <select name="chef">
-        {% for chef in chefOptions %}
+    <select name="chef_id">
+        {% for chef in chefs %}
         <option value="{{chef.id}}"
             {% if recipe.chef_id == chef.id %} selected {%endif%}>
             {{chef.name}}

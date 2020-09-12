@@ -124,26 +124,35 @@ module.exports = {
 
     },
     async delete(req,res){
-
         const id = req.body.id
         const userId = req.session.userId
-
+        const isAdmin = req.session.isAdmin
+        
         const user = await User.find({where: {id}})
-        if(user.id != userId){ //check if user to be delete aren't themselves
-            await User.delete(id)
-    
-            const users = await User.all()
-            return res.render('admin/users/list', {
-                users,
-                success: "Usuário Excluido com sucesso!"
-            })
-        }
-        else{
-            const users = await User.all()
-            return res.render('admin/users/list', {
-                users,
-                error: "Não é possível excluir a si mesmo."
-            })
+        
+        try {
+
+            if(user.id != userId){ //check if user to be delete aren't themselves
+                await User.delete(id)
+        
+                const users = await User.all()
+                return res.render('admin/users/list', {
+                    users,
+                    success: "Usuário Excluido com sucesso!"
+                })
+            }
+            else{
+                const users = await User.all()
+                return res.render('admin/users/list', {
+                    users,
+                    error: "Não é possível excluir a si mesmo."
+                })
+            }
+            
+        } catch (err) {
+            console.error(err)
+            return res.render('admin/users/edit', {user, isAdmin, error: "Erro ao deletar usuário!"})
+
         }
 
     }
