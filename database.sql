@@ -109,12 +109,14 @@ CREATE INDEX "IDX_session_expire" ON "session" ("expire");
 
 --AJUSTAR AQUI
 --cascade delete on user and products
-ALTER TABLE "products"
-DROP CONSTRAINT products_user_id_fkey,
-ADD CONSTRAINT  products_user_id_fkey
+ALTER TABLE "recipes"
+DROP CONSTRAINT recipes_user_id_fkey,
+ADD CONSTRAINT  recipes_user_id_fkey
 FOREIGN KEY ("user_id")
 REFERENCES "users"("id")
 ON DELETE CASCADE;
+
+--AJUSTAR AQUI
 
 ALTER TABLE "files"
 DROP CONSTRAINT files_product_id_fkey,

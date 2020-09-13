@@ -48,9 +48,9 @@
     color: #423892;
 }
 
-.user-card button.userBtn{
+.user-card button.remove{
     color: #F55A5A;
 }
-.user-card button.userBtn:hover{
+.user-card button.remove:hover{
     color: #aa0101;
 }

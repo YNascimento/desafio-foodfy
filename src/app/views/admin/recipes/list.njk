@@ -24,7 +24,11 @@
         <div class="admin-cards">
             {% for recipe in recipes %}
             <div class="admin-card">
-                <img src="{{files[loop.index0].src}}" alt="">
+                {% if not files[loop.index0] %}
+                    <img src="http://placehold.it/150x150?text=SEM FOTO">
+                {%else%}
+                    <img src="{{files[loop.index0].src}}" alt="">
+                {%endif%}
                 <div>
                     <h4>{{recipe.title}}</h4>
                     <small>Por {{chef.name}}</small>

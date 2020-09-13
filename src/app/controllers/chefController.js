@@ -13,29 +13,24 @@ module.exports = {
         try {
             const isAdmin = req.session.isAdmin
     
-            let allChefs = await Chef.findAll(null, 'created_at DESC' )
-            chefsPromise = allChefs.map(async chef => {
+            //get all chefs
+            const chefs = await Chef.findAll(null, 'ORDER BY created_at DESC')
     
-                chef.total_recipes = await Recipe.findAll({where: {chef_id: chef.id}})
-                chef.file = await loadServie.getImage(chef.file_id)
-                return chef
-            })
-            const chefs = await Promise.all(chefsPromise)            
+            //get all chefs' imgs
+            const chefFilePromise = chefs.map(chef => loadService.getImage(chef.file_id))
+            let files = await Promise.all(chefFilePromise)
+
+            //get total recipes from chefs
+            const totalrecipesPromise = chefs.map(chef => Chef.totalRecipesByChef(chef.id))
+            let totalRecipes = await Promise.all(totalrecipesPromise)
             
-            return res.render('admin/chefs/list', {chefs, isAdmin})
+            chefs.map((chef,index) => chef.totalRecipes = totalRecipes[index].total)
+
+            return res.render('admin/chefs/list', {chefs, files, isAdmin})
             
         } catch (err) {
             console.error(err)
         }
-        
-        // await Promise.all(chefsPromise).then(values => {   
-            //     files = values.map(file =>({
-                //         ...file,
-                //         src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
-                //     }))
-            // })
-
-
     },
     create(req,res){
         const isAdmin = req.session.isAdmin
@@ -46,57 +41,15 @@ module.exports = {
 
         try {
             const isAdmin = req.session.isAdmin
-    
-            //get chef
-            const chef = await Chef.find({where: {id: req.params.id}}) 
-            if(!chef) res.send("Chef not found")
-    
-            //get chef img
-            chef.file = await File.find({where: {id: chef.file_id}})
-            chef.file.src = `${req.protocol}://${req.headers.host}${chef.file.path.replace('public','')}`
-    
-            //get imgs to all chef's recipes
-            const filePromises = recipes.map(recipe => {loadService.getImages(recipe.id)})
-            const recipeFiles = await Promise.all(filePromises)
-    
-            //pagination prep
             let {page, limit} = req.query
-            page = page || 1
-            limit = limit || 4
-        
-            let offset = limit*(page-1)
-            const params = {page, limit, offset }
     
-            const recipes = await Chef.recipesBy(chef.id, params) //recipes with pagination
-            const total_recipes = await Chef.totalRecipesByChef(chef.id)
-    
-            const pagination = {
-                total: Math.ceil(total_recipes.total/limit), //total pages
-                page
-            }
+            const {chef, recipes, pagination, total_recipes, recipeFiles } = await loadService.getChefPaginate(req.params.id, page, limit)
     
             return res.render('admin/chefs/show',{chef, recipes, pagination, total_recipes, recipeFiles, isAdmin})
             
         } catch (err) {
             console.error(err)
         }
-        // const filePromises = recipes.map(recipe => File.getFilesByRecipe(recipe.id))
-        // await Promise.all(filePromises).then((values) => {
-
-        //     const files = values.map(file => ({...file[0]}))
-        //     if(files){
-        //         if(typeof files[0] !== 'undefined' && typeof files[0].id !== 'undefined'){
-
-        //             const files2 = files.map(file => ({
-        //                 ...file,
-        //                 src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
-        //             }))
-
-        //             return res.render('admin/chefs/show',{chef, recipes, pagination, total_recipes, chefFile, recipeFiles : files2, isAdmin})
-        //         }
-        //     }
-        //     return res.render('admin/chefs/show',{chef, recipes, total_recipes, chefFile, isAdmin})
-        // })
     },
     async edit(req,res){
             const isAdmin = req.session.isAdmin

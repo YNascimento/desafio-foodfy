@@ -10,8 +10,9 @@ routes.get('/', homeController.index) //index
 routes.get('/recipes', homeController.recipes)//receitas
 routes.get('/about', homeController.about)//sobre
 routes.get('/recipes/busca',homeController.busca) //filtro
-routes.get('/recipes/:id', homeController.show) //detalhes receita
+routes.get('/recipes/:id', homeController.showRecipe) //detalhes receita
 routes.get('/chefs', homeController.chefs)//chefs
+routes.get('/chefs/:id', homeController.showChef)//chefs
 
 //alias
 routes.get("/admin", function(req,res){res.redirect("/admin/recipes")})

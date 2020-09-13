@@ -5,6 +5,8 @@ const Recipe_File = require('../models/Recipe_File')
 
 const loadService = require('../services/loadService')
 
+const fs = require('fs')
+
 
 module.exports = {
     async all(req,res){
@@ -12,34 +14,22 @@ module.exports = {
         try {
             const isAdmin = req.session.isAdmin
             const userId = req.session.userId
-    
+            const {filter, page, limit, byUser} = req.query
+            const isBusca = 0
             //pagination prep
-            let {filter, page, limit, byUser} = req.query
-
-            const {pagination, filter} = loadService.paginate(filter, page, limit, null, byUser, userId)
+            let {recipes, pagination, filterReturn} = await loadService.getPaginate(filter, page, limit, isBusca,byUser, userId)
     
             //get recipe imgs
-            const filePromises = recipes.map(recipe => {loadService.getImages(recipe.id)})
-            const files = await Promise.all(filePromises)
+            const filePromises = recipes.map(recipe => loadService.getImages(recipe.id))
+            const allFiles = await Promise.all(filePromises)
+            const files = allFiles.map(file => file[0])
     
-            return res.render('admin/recipes/list', {recipes, pagination, filter, files, isAdmin})
+            return res.render('admin/recipes/list', {recipes, pagination, filter : filterReturn, files, isAdmin})
             
         } catch (err) {
             console.error(err)
             return res.render('admin/layout', {userId, error:"Erro ao carregar página!"})
         }
-
-        // .then((values) => {
-        //     const files = values.map(file => ({...file[0]}))
-        //     if(files){
-        //         if(typeof files[0] !== 'undefined' && typeof files[0].id !== 'undefined'){
-        //             const files2 = files.map(file => ({
-        //                 ...file,
-        //                 src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
-        //             }))
-        //         }   
-        //     }
-        // })
     },
     async create(req,res){
         const isAdmin = req.session.isAdmin
@@ -58,15 +48,13 @@ module.exports = {
         const isAdmin = req.session.isAdmin
         
         try {
+            const {recipe, files, chef} = await loadService.getRecipe(req.params.id)
+            
+            recipe.chef_name = chef.name
+
             //check if user created this recipe
             let owner = recipe.user_id == req.session.userId ? true : false
     
-            let results = loadService.getRecipe(req.params.id)
-            const {recipe, files} = results
-    
-            //get: chefs das seis primeiras receitas
-            chef = await Chef.find({where: {id: recipe.chef_id} })
-            recipe.chef_name = chef.name
     
             return res.render('admin/recipes/show',{recipe, files, isAdmin, owner})
             
@@ -80,11 +68,11 @@ module.exports = {
 
         try {
             //get: recipe and recipe's files
-            let results = loadService.getRecipe(req.params.id)
+            let results = await loadService.getRecipe(req.params.id)
             const {recipe, files} = results
             
             //get: chefs das seis primeiras receitas
-            chef = await Chef.find({where: {id: recipe.chef_id} })
+            chef = await Chef.find(recipe.chef_id)
             recipe.chef_name = chef.name
     
             const chefs = await Chef.findAll()
@@ -114,15 +102,15 @@ module.exports = {
             const recipeId = await Recipe.create({
                 chef_id,
                 title,
-                ingredients,
-                preparation,
+                ingredients: `{${ingredients}}`,
+                preparation: (`{${preparation}}`),
                 information,
                 user_id: req.session.userId
             })
             
             //create: files
             const filePromises = req.files.map(file => File.create({
-                name: file.name,
+                name: file.filename,
                 path: file.path,
                 recipe_id: recipeId
             }))
@@ -151,20 +139,21 @@ module.exports = {
                 }
             }
     
-            const {recipeId: id, title, chef_id, ingredients, preparation, information} = req.body
-    
+            let {id, title, chef_id, ingredients, preparation, information} = req.body
+            const recipeId = id
+
             if(req.files.length != 0){ //new files
-    
+
                 //create: files
                 const newFilesPromise = req.files.map(file => File.create({
-                    name: file.name,
+                    name: file.filename,
                     path: file.path,
                     recipe_id: recipeId
                 }))
                 const filesId = await Promise.all(newFilesPromise)
     
                 //create: recipe_files
-                const recipeFilePromises = filesId.map(fileId => File.create({
+                const recipeFilePromises = filesId.map(fileId => Recipe_File.create({
                     recipe_id: recipeId,
                     file_id: fileId
                 }))
@@ -179,22 +168,22 @@ module.exports = {
                 removedFilesIds.splice(lastIndex,1)
     
                 //pull files to be deleted
-                filesPromise = removedFilesIds.map(fileId => File.find({where: {id: fileId} }))
+                filesPromise = removedFilesIds.map(fileId => File.find(fileId))
                 files = await Promise.all(filesPromise)
-    
-                //delete from public/img
-                files.map(file => fs.unlinkSync(file.path))
     
                 //delete from DB
                 const removedFilesPromise = removedFilesIds.map(id => File.delete(id))
                 await Promise.all(removedFilesPromise)
+
+                //delete from public/img
+                files.map(file => fs.unlinkSync(file.path))
             }
     
             await Recipe.update(recipeId, {
                 chef_id,
                 title,
-                ingredients,
-                preparation,
+                ingredients: `{${ingredients}}`,
+                preparation: (`{${preparation}}`),
                 information,
                 user_id: req.session.userId
             })

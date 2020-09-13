@@ -7,7 +7,7 @@ module.exports = {
         
         next()
     },
-    async isAdmin(req, res, user, next){
+    isAdmin(req, res, user, next){
         
         if(!user.is_admin) {
             req.session.isAdmin = false

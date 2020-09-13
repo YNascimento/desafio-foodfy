@@ -23,10 +23,15 @@
             <h4>{{user.name}}</h4>
             <small>{{user.email}}</small>
             <div>
-                <a class="userBtn" href="/admin/users/{{user.id}}/edit">Editar</a>
+                {# <form action="/admin/users/edit" method="get">
+                    <button class="userBtn" type="submit">Editar</button>
+                    <input type="hidden" name="id" value={{user.id}}>   
+                </form> #}
+                <a class="userBtn"  href="/admin/users/{{user.id}}/edit">Editar</a>
+                
                 <form action="/admin/users?_method=DELETE" method="post">
                     <input type="hidden" name="id" value={{user.id}}>
-                    <button class="userBtn" type="submit">Remover</button>
+                    <button class="userBtn remove" type="submit">Remover</button>
                 </form>
             </div>
         </div>

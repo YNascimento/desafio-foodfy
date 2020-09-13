@@ -1,12 +1,16 @@
 const File = require('../models/File')
 const Recipe = require('../models/Recipe')
+const Chef = require('../models/Chef')
 
 async function getImage(fileId){
-    let results = await File.find({where: {id: fileId} })
+
+    let results = await File.find(fileId)
+
     const file = {
         ...results,
-        src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
+        src: `${results.path.replace('public','')}`
     }
+
     return file
 }
 
@@ -15,7 +19,7 @@ async function getImages(recipeId){
 
     let files = results.map(file => ({
         ...file,
-        src: `${req.protocol}://${req.headers.host}${file.path.replace('public','')}`
+        src: `${file.path.replace('public','')}`
     }))
 
     return files
@@ -24,32 +28,60 @@ async function getImages(recipeId){
 async function getRecipe(id){
 
     const recipe = await Recipe.find(id)
-
-    if(!recipe) {
-        console.error('Recipe not found!')
-        return res.send('Recipe not found')
-    }
-
-    const files = getImages(recipe.id)
-
-    return {recipe, files}
+    const files = await getImages(recipe.id)
+    const chef = await Chef.find(recipe.chef_id)
+    
+    return {recipe, files, chef}
 }
 
-async function getPaginate(filter, page, limit, isBusca){
+async function getPaginate(filter, page, limit, isBusca, byUser, userId){
 
     page = page || 1
-    limit = limit || 3
+    limit = limit || 6
 
     let offset = limit*(page-1)
-    const params = { filter, page, limit, offset, isBusca }
+    const params = { filter, page, limit, offset, isBusca, byUser, userId }
     
     //get recipes
     const recipes = await Recipe.paginate(params)
     
     const pagination = {
-        total: Math.ceil(recipes[0].total/limit), //total pages
+        total:  recipes[0] != null ? Math.ceil(recipes[0].total/limit) : 0, //total pages
         page
     }
-    return {pagination, filter}
+    return {recipes, pagination, filter}
 }
-module.exports = { getImage, getImages, getRecipe, getPaginate }
+
+async function getChefPaginate(id, page, limit){
+    
+    const chef = await Chef.find(id) 
+    if(!chef) res.send("Chef not found")
+
+    //pagination prep
+    page = page || 1
+    limit = limit || 4
+
+    let offset = limit*(page-1)
+    const params = {page, limit, offset }
+
+    const recipes = await Chef.recipesBy(chef.id, params) //recipes with pagination
+    const total_recipes = await Chef.totalRecipesByChef(chef.id)
+
+    const pagination = {
+        total:  recipes[0] != null ? Math.ceil(recipes[0].total/limit) : 0, //total pages
+        page
+    }
+
+    //get chef img
+    chef.file = await File.find(chef.file_id)
+    chef.file.src = `${chef.file.path.replace('public','')}`
+
+    //get imgs to all chef's recipes
+    const allRecipeFilesPromises = recipes.map(recipe => getImages(recipe.id))
+    const allRecipeFiles = await Promise.all(allRecipeFilesPromises)
+    const recipeFiles = allRecipeFiles.map(file => file[0])
+
+    return {chef, recipes, pagination, total_recipes, recipeFiles}
+}
+
+module.exports = { getImage, getImages, getRecipe, getPaginate, getChefPaginate }

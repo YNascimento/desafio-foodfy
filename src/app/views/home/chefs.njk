@@ -13,10 +13,12 @@
             <div>
                 <h4>{{chef.name}}</h4>
                 <small class="presentation-author">
-                    {{chef.total_recipes}}
-                    {% if chef.total_recipes != 1  %} receitas {%endif%}
-                    {% if chef.total_recipes == 1  %} receita {%endif%}
+                    {{chef.totalRecipes}}
+                    {% if chef.totalRecipes != 1  %} receitas {%endif%}
+                    {% if chef.totalRecipes == 1  %} receita {%endif%}
                 </small>
+                <a href="/chefs/{{chef.id}}">Visualizar</a>
+
             </div>
         </div>
         {% endfor %}

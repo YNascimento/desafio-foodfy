@@ -15,7 +15,7 @@ function find(filters, orderBy, table){
     }
 
     if(orderBy){
-        query += `ORDER BY ${orderBy}`
+        query += ` ${orderBy}`
     }
 
     return db.query(query)
@@ -30,7 +30,17 @@ const Base = {
     },
     async find(id){
         try {
-            const results = await find({ where: {id} }, this.table) 
+
+            const results = await find({ where: {id} }, null,this.table) 
+            return results.rows[0]
+
+        } catch (err) {
+            console.error(err)
+        }
+    },
+    async findOne(filters, orderBy){
+        try {
+            const results = await find(filters, null, this.table)
             return results.rows[0]
 
         } catch (err) {
@@ -73,7 +83,6 @@ const Base = {
             })
 
             let query = `UPDATE ${this.table} SET ${update.join(',')} WHERE id = ${id}`
-
             return db.query(query)
 
         } catch (err) {

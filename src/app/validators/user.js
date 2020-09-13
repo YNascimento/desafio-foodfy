@@ -23,7 +23,7 @@ module.exports = {
         const {name, email} = req.body
 
         //check if user exists
-        const user = await User.find({
+        const user = await User.findOne({
             where: {email}
         })
 
@@ -35,7 +35,6 @@ module.exports = {
         next()
     },
     async adminUpdate(req,res,next){
-        const {id} = req.params
 
         //check if fields filled
         const isFieldsFilled = checkFields(req.body)
@@ -47,9 +46,7 @@ module.exports = {
     async indexForm(req,res,next){
         let id = req.session.userId
 
-        let results = await User.find({
-            where:{id}
-        })
+        let results = await User.find(id)
         const user = results
         req.user = user
         if(!user) return res.render('session/login', {error: "Acesso não permitido."})
@@ -69,7 +66,7 @@ module.exports = {
                 error:"Coloque sua senha para atualizar seu cadastro"
             })
 
-        const user = await User.find({ where: {id} })
+        const user = await User.find(id)
         
         const samePassword = await compare(password, user.password)
         // if(password == "b23a2eecb056c82a") samePassword=true

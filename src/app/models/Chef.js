@@ -5,27 +5,19 @@ Base.init({table:'chefs'})
 
 module.exports = {
     ...Base,
-    async recipesBy(id, params = null, orderBy = null){
+    async recipesBy(id, params){
 
         const {offset, limit} = params
-        const {order, direction} = orderBy
 
-        let query = `SELECT * FROM recipes WHERE chef_id = ${id}`
-
-        if(order){
-            query += `ORDER BY ${order}`
-            if(direction)
-                query += `${direction}`
-        }
+        let query = `SELECT * FROM recipes WHERE chef_id = ${id} ORDER BY created_at DESC`
 
         if(limit){
             query += ` LIMIT ${limit}`
             if(offset)
                 query += `OFFSET ${offset}`
         }
-        
         try {
-            let results = await db.query(query,[id, limit, offset])
+            let results = await db.query(query)
             return results.rows
         } catch (err) {
             console.error(err)

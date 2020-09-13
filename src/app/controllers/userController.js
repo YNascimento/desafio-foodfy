@@ -4,12 +4,13 @@ const crypto = require('crypto')
 const {hash} = require('bcryptjs')
 
 const mailer = require('../../lib/mailer')
+const user = require("../validators/user")
 
-const createEmail = (user) => {
-    `<h2>Criamos uma senha pra você!</h2>
+const createEmail = (password) =>`
+    <h2>Criamos uma senha pra você!</h2>
     <p> Caso queria alterá-la, vá em "Esqueci minha senha" </p>
-    <p>${user.password}</p>`
-}
+    <p>${password}</p>
+    `
 
 module.exports = {
     async list(req,res){
@@ -31,29 +32,29 @@ module.exports = {
     async create(req,res){
         try {
             const {name, email, isAdmin} = req.body
+            let is_admin = isAdmin == "1" ? true : false
             
-            let password = crypto.randomBytes(8).toString("hex")
             
+            // let password = crypto.randomBytes(8).toString("hex")
+            let password = '123'
+
             await mailer.sendMail({ //enviar email com senha gerada
-                to: user.email,
+                to: email,
                 from: 'no-reply@foodfy.com.br',
                 subject: 'Conta Criada. Aqui está sua senha!',
-                html: createEmail(user),
+                html: createEmail(password),
             })
-            password = await hash(user.password, 8)
+            password = await hash(password, 8)
     
-            if(user.isAdmin == "1") user.isAdmin = true
-            else user.isAdmin = false
-            
-            await User.create({
+            const userId = await User.create({
                 name,
                 email,
                 password,
-                is_admin: isAdmin,
+                is_admin,
             })
     
             let users = await User.findAll()
-            return res.render('admin/users/list', {users, success: "Cadastro feito com sucesso!"})
+            return res.render('admin/users/list', {users, isAdmin: req.session.isAdmin, success: "Cadastro feito com sucesso!"})
             
         } catch (err) {
             console.error(err)
@@ -91,9 +92,10 @@ module.exports = {
     },
     async editForm(req,res){
         try {
+            
             const isAdmin = req.session.isAdmin
-            const user = await User.find({ where: {id: req.params.id} })
-    
+            const user = await User.find(req.params.id)
+
             return res.render('admin/users/edit', {user, isAdmin})
             
         } catch (err) {
@@ -104,14 +106,16 @@ module.exports = {
     },
     async adminUpdate(req,res){
         try {
-            const id = req.params.id
-            const {name, email} = req.body
-    
-            await User.update(id, { name, email })
+            console.log(req.body)
+            let {name, email, isAdmin} = req.body
+            let is_admin = isAdmin == "1" ? true : false
+
+            await User.update(req.body.id, {name, email, is_admin})
     
             return res.render(`admin/users/edit`, {
                 user:req.body,
-                success: "Conta atualizada com sucesso!"
+                isAdmin,
+                success: "Usuário atualizado!"
             })
             
         } catch (err) {
@@ -128,21 +132,21 @@ module.exports = {
         const userId = req.session.userId
         const isAdmin = req.session.isAdmin
         
-        const user = await User.find({where: {id}})
-        
+        const user = await User.find(id)
         try {
-
             if(user.id != userId){ //check if user to be delete aren't themselves
+                
                 await User.delete(id)
         
-                const users = await User.all()
+                const users = await User.findAll()
+
                 return res.render('admin/users/list', {
                     users,
                     success: "Usuário Excluido com sucesso!"
                 })
             }
             else{
-                const users = await User.all()
+                const users = await User.findAll()
                 return res.render('admin/users/list', {
                     users,
                     error: "Não é possível excluir a si mesmo."

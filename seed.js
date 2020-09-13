@@ -8,8 +8,8 @@ const { hash } = require("bcryptjs")
 const faker = require('faker')
 
 let totalUsers = 5,
-    totalChefs = 3,
-    totalRecipes = 3,
+    totalChefs = 5,
+    totalRecipes = 10,
     totalRecipeFiles = 5
     
 async function createFiles(name, quantity, recipeId){
@@ -69,7 +69,7 @@ async function createUsers(){
 
 async function createChefs(){
 
-    const filesIds = await createFiles('chef', 3)
+    const filesIds = await createFiles('chef', totalChefs)
     const chefs =[]
     while(chefs.length < totalChefs){
         

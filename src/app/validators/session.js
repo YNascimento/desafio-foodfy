@@ -6,7 +6,7 @@ module.exports = {
     async login(req,res,next){
         const {email, password} = req.body
 
-        const user = await User.find({where: {email}})
+        const user = await User.findOne({where: {email}})
 
         if(!user) return res.render('session/login', {
             user:req.body,
@@ -19,14 +19,14 @@ module.exports = {
             error: "Senha incorreta!"
         })
         req.user = user
-        
+
         isAdmin(req, res, user, next)
         next()
     },
     async forgot(req,res,next){
         const {email} = req.body
 
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
         if(!user) return res.render('session/forgot-password', {
             user:req.body,
             error: "E-mail não cadastrado!"
@@ -38,7 +38,7 @@ module.exports = {
     async reset(req,res,next){
         const {email, password, passwordRepeat, token} = req.body
 
-        const user = await User.find({ where: {email} })
+        const user = await User.findOne({ where: {email} })
         if(!user) return res.render('session/reset-password', {
             token,
             user:req.body,
