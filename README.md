@@ -27,7 +27,8 @@ In this application a Admin can create, edit and remove recipes, chefs, another 
 - JavaScript and ES6+
 - NodeJS
 - Nunjucks
-- PostgreSQL
+- PostgreSQL and PostBird
+- Visual Studio Code
 
 ## 🛠 Setup <a name = "setup"></a>
 
@@ -35,10 +36,21 @@ In this application a Admin can create, edit and remove recipes, chefs, another 
 $ cd <folder>
 $ git clone
 $ cd desafio-foodfy
+```
+At this point you should have a file called 'database.sql' in your folder. 
+Open it, copy all the instructions, Go to PostBird -> Connect -> tab "Query" and paste all the instructions
+
+- Run the first two lines ("Drop Schema..." and "Create Schema...") as a Selection
+- Run the third line
+- Run the fourth line
+- Go to the Foodfy Databse and run the rest of the instructions
+- Cool! Now back to the VS Code!
+
+```
 $ npm install
 $ node seed.js
 $ npm start
-$ wait for the page to open
+Now just wait for the page to open
 ```
 
 ## ✒️ Authors <a name = "authors"></a>
