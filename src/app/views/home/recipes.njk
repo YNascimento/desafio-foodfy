@@ -1,4 +1,5 @@
-{% extends "home/layout.njk" %}
+{% extends "parts/layoutHome.njk" %}
+{% import "parts/divRecipes.njk" as divRecipes %}
 
 {% block head %}
     <title>Foodfy - Receitas</title>
@@ -7,16 +8,8 @@
 {% endblock %} 
 
 {% block content %}
-    <div class="receitas">                
-        <div class="cards">
-        {%for recipe in recipes %}
-            <div class="card" id="{{recipe.id}}">
-                <img class="card-img" src="{{files[loop.index0].src}}" alt="{{recipe.title}}">
-                <h4 class="card-titulo">{{recipe.title}}</h4>
-                <small class="card-autor">por {{recipe.chef_name}}</small>
-            </div>
-        {% endfor %}
-    </div>
+
+    {{ divRecipes.homeRecipes(recipes, files) }}
 
     <div class="pagination" data-page={{pagination.page}} data-total={{pagination.total}} data-filter={{filter}}></div>
 

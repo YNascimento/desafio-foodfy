@@ -326,6 +326,7 @@
     right: 0;
     opacity: 1;
     font-size: 16px;
+    z-index: 1;
     
     /*animação transição delay tipo_de_transição status_final (fowards = parado onde terminou animação, backwards=volta para pos inicial)*/
     animation: hidemessage 400ms 4s ease-out forwards; 

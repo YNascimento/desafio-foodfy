@@ -30,6 +30,7 @@ async function getRecipe(id){
     const recipe = await Recipe.find(id)
     const files = await getImages(recipe.id)
     const chef = await Chef.find(recipe.chef_id)
+    recipe.chef_name = chef.name
     
     return {recipe, files, chef}
 }
@@ -65,7 +66,9 @@ async function getChefPaginate(id, page, limit){
     const params = {page, limit, offset }
 
     const recipes = await Chef.recipesBy(chef.id, params) //recipes with pagination
-    const total_recipes = await Chef.totalRecipesByChef(chef.id)
+    recipes.map(recipe => recipe.chef_name = chef.name)
+
+    const totalRecipes = await Chef.totalRecipesByChef(chef.id)
 
     const pagination = {
         total:  recipes[0] != null ? Math.ceil(recipes[0].total/limit) : 0, //total pages
@@ -81,7 +84,7 @@ async function getChefPaginate(id, page, limit){
     const allRecipeFiles = await Promise.all(allRecipeFilesPromises)
     const recipeFiles = allRecipeFiles.map(file => file[0])
 
-    return {chef, recipes, pagination, total_recipes, recipeFiles}
+    return {chef, recipes, pagination, totalRecipes, recipeFiles}
 }
 
 module.exports = { getImage, getImages, getRecipe, getPaginate, getChefPaginate }

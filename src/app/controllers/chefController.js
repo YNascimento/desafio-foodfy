@@ -58,7 +58,7 @@ module.exports = {
         try {
 
             if(!chef) {
-                return res.render('admin/layout',{error: "Chef não encontrado"})
+                return res.render('parts/layoutAdmin',{error: "Chef não encontrado"})
             }
     
             chef.file = await File.find({where : {id: chef.file_id}})
@@ -68,7 +68,7 @@ module.exports = {
             
         } catch (err) {
             console.error(err)
-            return res.render('admin/layout',{error: "Erro ao carregar a página"})
+            return res.render('parts/layoutAdmin',{error: "Erro ao carregar a página"})
         }
     },
     async post(req,res){

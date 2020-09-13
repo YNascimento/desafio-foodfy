@@ -70,7 +70,7 @@ module.exports = {
     },
     onlyAdmin(req,res,next){
         if(!req.session.isAdmin){
-            return res.render('admin/layout',{ error:"Acesso Negado!" })
+            return res.render('parts/layoutAdmin',{ error:"Acesso Negado!" })
         }
 
         next()

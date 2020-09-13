@@ -1,0 +1,17 @@
+{% extends "parts/layoutHome.njk" %}
+{% import "parts/showRecipe.njk" as recipeInfo %}
+
+{% block head %}
+
+    <title>{{recipe.title}}</title>
+    <link rel="stylesheet" href="/css/show.css">
+{% endblock %} 
+
+{% block content %}
+    <div class="details-container">
+        
+        {{ recipeInfo.show(recipe, files) }}
+        
+    </div>
+    <script src="/js/home/details.js"></script>
+{% endblock %} 

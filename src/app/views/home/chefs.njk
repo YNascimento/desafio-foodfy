@@ -1,4 +1,6 @@
-{% extends "home/layout.njk" %}
+{% extends "parts/layoutHome.njk" %}
+{% import "parts/divChefs.njk" as div %}
+
 
 {% block head %}
     <title>Foodfy - Receitas</title>
@@ -6,21 +8,7 @@
 {% endblock %} 
 
 {% block content %}
-    <div class="cards">
-        {% for chef in chefs %}
-        <div class="card">
-            <img src="{{files[loop.index0].src}}" alt="{{chef.name}}">
-            <div>
-                <h4>{{chef.name}}</h4>
-                <small class="presentation-author">
-                    {{chef.totalRecipes}}
-                    {% if chef.totalRecipes != 1  %} receitas {%endif%}
-                    {% if chef.totalRecipes == 1  %} receita {%endif%}
-                </small>
-                <a href="/chefs/{{chef.id}}">Visualizar</a>
 
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    {{ div.chefs(chefs, files) }}
+
 {% endblock %} 

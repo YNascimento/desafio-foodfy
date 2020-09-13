@@ -28,7 +28,7 @@ module.exports = {
             
         } catch (err) {
             console.error(err)
-            return res.render('admin/layout', {userId, error:"Erro ao carregar página!"})
+            return res.render('parts/layoutAdmin', {userId, error:"Erro ao carregar página!"})
         }
     },
     async create(req,res){

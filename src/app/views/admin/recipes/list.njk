@@ -1,4 +1,5 @@
-{% extends "admin/layout.njk" %}
+{% extends "parts/layoutAdmin.njk" %}
+{% import "parts/divRecipes.njk" as divRecipes %}
 
 
 {% block head %}
@@ -20,23 +21,7 @@
             </div>
         </div>
         
-
-        <div class="admin-cards">
-            {% for recipe in recipes %}
-            <div class="admin-card">
-                {% if not files[loop.index0] %}
-                    <img src="http://placehold.it/150x150?text=SEM FOTO">
-                {%else%}
-                    <img src="{{files[loop.index0].src}}" alt="">
-                {%endif%}
-                <div>
-                    <h4>{{recipe.title}}</h4>
-                    <small>Por {{chef.name}}</small>
-                    <a href="/admin/recipes/{{recipe.id}}">Visualizar</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+        {{ divRecipes.adminRecipes(recipes, files) }}
         
         <div class="pagination" data-page={{pagination.page}} data-total={{pagination.total}} data-filter={{filter}}></div>
 

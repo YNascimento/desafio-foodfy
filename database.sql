@@ -1,10 +1,21 @@
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 
-DROP DATABASE IF EXISTS foodfy;
-CREATE DATABASE foodfy;
+DROP DATABASE IF EXISTS foodfy2;
+CREATE DATABASE foodfy2;
 
- --ESSA TA OK
+CREATE TABLE "users" (
+  "id" SERIAL PRIMARY KEY,
+  "name" text NOT NULL,
+  "email" text UNIQUE NOT NULL,
+  "password" text NOT NULL,
+  "reset_token" text,
+  "reset_token_expires" text,
+  "is_admin" boolean DEFAULT(false),
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now())
+);
+
 CREATE TABLE "recipes" (
   "id" SERIAL PRIMARY KEY,
   "chef_id" int,
@@ -17,10 +28,7 @@ CREATE TABLE "recipes" (
   "user_id" int
 );
 
---ESSA TA OK
-ALTER TABLE "recipes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
---ESSA TA OK
 CREATE TABLE "chefs" (
   "id" SERIAL PRIMARY KEY,
   "name" text NOT NULL,
@@ -28,10 +36,6 @@ CREATE TABLE "chefs" (
   "file_id" int
 );
 
---ESSA TA OK
-ALTER TABLE "chefs" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("id");
-
- --ESSA TA OK
 CREATE TABLE "files" (
   "id" SERIAL PRIMARY KEY,
   "name" text,
@@ -39,39 +43,20 @@ CREATE TABLE "files" (
   "recipe_id" int
 );
 
---ESSA TA OK
-ALTER TABLE "files" ADD FOREIGN KEY ("recipe_id") REFERENCES "recipes" ("id");
-
- --ESSA TA OK
 CREATE TABLE "recipe_files" (
   "id" SERIAL PRIMARY KEY,
   "recipe_id" int,
   "file_id" int
 );
 
---ESSA TA OK
+-- foreign keys
+ALTER TABLE "recipes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "chefs" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("id");
+ALTER TABLE "files" ADD FOREIGN KEY ("recipe_id") REFERENCES "recipes" ("id") ON DELETE CASCADE;
 ALTER TABLE "recipe_files" ADD FOREIGN KEY ("recipe_id") REFERENCES "recipes" ("id");
-ALTER TABLE "recipes_files" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("id");
-
- --ESSA TA OK
-CREATE TABLE "users" (
-  "id" SERIAL PRIMARY KEY,
-  "name" text NOT NULL,
-  "email" text UNIQUE NOT NULL,
-  "password" text NOT NULL,
-  "reset_token" text,
-  "reset_token_expires" text,
-  "is_admin" boolean DEFAULT(0),
-  "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp DEFAULT (now())
-);
-
--- foreign key
---ESSA TA OK
-ALTER TABLE "recipes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id")
+ALTER TABLE "recipe_files" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("id");
 
 -- create procedure
---ESSA TA OK
 CREATE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -81,21 +66,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- auto updated_at recipes
---ESSA TA OK
 CREATE TRIGGER set_timestamp 
 BEFORE UPDATE ON recipes
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
 -- auto updated_at users
---ESSA TA OK
 CREATE TRIGGER set_timestamp 
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
--- table for session with PostgreSQL
---connect pg simple table
+-- table for session with PostgreSQL: connect pg simple table
 CREATE TABLE "session" (
   "sid" varchar NOT NULL COLLATE "default",
 	"sess" json NOT NULL,
@@ -107,30 +89,13 @@ ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFE
 
 CREATE INDEX "IDX_session_expire" ON "session" ("expire");
 
---AJUSTAR AQUI
---cascade delete on user and products
-ALTER TABLE "recipes"
-DROP CONSTRAINT recipes_user_id_fkey,
-ADD CONSTRAINT  recipes_user_id_fkey
-FOREIGN KEY ("user_id")
-REFERENCES "users"("id")
-ON DELETE CASCADE;
-
---AJUSTAR AQUI
-
-ALTER TABLE "files"
-DROP CONSTRAINT files_product_id_fkey,
-ADD CONSTRAINT  files_product_id_fkey
-FOREIGN KEY ("product_id")
-REFERENCES "products"("id")
-ON DELETE CASCADE;
-
---to run seeds
+--delete all data from tables
 DELETE FROM recipes;
 DELETE FROM chefs;
 DELETE FROM users;
 DELETE FROM files;
 DELETE FROM recipe_files;
+DELETE FROM session;
 
 --restart sequence auto-increment from tables' ids
  ALTER SEQUENCE recipes_id_seq RESTART WITH 1;

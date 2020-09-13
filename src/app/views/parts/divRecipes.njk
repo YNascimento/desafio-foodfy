@@ -1,0 +1,35 @@
+{% macro homeRecipes(recipes, files) %}
+
+<div class="cards">
+    {%for recipe in recipes %}
+        <div class="card" id="{{recipe.id}}">
+            <img class="card-img" src="{{files[loop.index0].src}}" alt="{{recipe.title}}">
+            <h4 class="card-titulo">{{recipe.title}}</h4>
+            <small class="card-autor">por {{recipe.chef_name}}</small>
+        </div>
+    {% endfor %}
+</div>
+
+{% endmacro %}
+
+
+{% macro adminRecipes(recipes, files) %}
+
+<div class="admin-cards">
+    {% for recipe in recipes %}
+    <div class="admin-card">
+        {% if not files[loop.index0] %}
+            <img src="http://placehold.it/150x150?text=SEM FOTO">
+        {%else%}
+            <img src="{{files[loop.index0].src}}" alt="">
+        {%endif%}
+        <div>
+            <h4>{{recipe.title}}</h4>
+            <small>Por {{recipe.chef_name}}</small>
+            <a href="/admin/recipes/{{recipe.id}}">Visualizar</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endmacro %}

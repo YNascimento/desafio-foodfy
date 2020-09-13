@@ -19,9 +19,10 @@
 
 .header-box div{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 100px 100px;
     justify-self: right;
     align-self: center;
+    gap: 5%;
 }
 .header-box div a{
     text-align: center;
