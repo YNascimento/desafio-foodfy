@@ -57,14 +57,5 @@ Now just wait for the page to open
 
 👤 **Yuri Nascimento**
 
-- Github: [@ldelbel](https://github.com/YNascimento)
-- Linkedin: [lucasdelbel](https://www.linkedin.com/in/ynascimento/)
-
-
-## 👍 Show your support
-
-Give a ⭐️ if you like this project!
-
-## :clap: Acknowledgements
-
-- Microverse: [@microverse](https://www.microverse.org/)
+- Github: [@YNascimento](https://github.com/YNascimento)
+- Linkedin: [YNascimento](https://www.linkedin.com/in/ynascimento/)
