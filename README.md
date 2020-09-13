@@ -41,10 +41,10 @@ At this point you should have a file called 'database.sql' in your folder.
 Open it, copy all the instructions, Go to PostBird -> Connect -> tab "Query" and paste all the instructions
 
 - Run the first two lines ("Drop Schema..." and "Create Schema...") as a Selection
-- Run the third line
-- Run the fourth line
-- Go to the Foodfy Databse and run the rest of the instructions
-- Cool! Now back to the VS Code!
+- Run the third line as a Selection
+- Run the fourth line as a Selection
+- Go to the just created Foodfy Database and run the rest of the instructions
+- Cool! Now back to the VS Code.
 
 ```
 $ npm install
