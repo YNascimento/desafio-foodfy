@@ -23,7 +23,9 @@
         
         <div class="details-box">
             <h2 class="details-h2">Ingredientes</h2>
-            <ul id="details-ul" class="details-list">
+            <small><a id="show-ingredients" class="show-link hide">MOSTRAR</a></small>
+            <small><a id="hide-ingredients" class="hide-link">ESCONDER</a></small>
+            <ul id="ingredients-ul" class="details-list">
                 {%for ingredient in recipe.ingredients %}
                     <li>- {{ingredient}}</li>
 
@@ -33,7 +35,9 @@
 
         <div class="details-box">
             <h2 class="details-h2">Modo de Preparo</h2>
-            <ul id="details-ul" class="details-list">
+            <small><a id="show-preparation" class="show-link hide" >MOSTRAR</a></small>
+            <small><a id="hide-preparation" class="hide-link">ESCONDER</a></small>
+            <ul id="preparation-ul" class="details-list">
                 {%for preparation in recipe.preparation %}
                     <li>- {{preparation}}</li>
 
@@ -43,8 +47,13 @@
 
         <div class="details-box">
             <h2 class="details-h2">Informações Adicionais</h2>
+            <small><a id="show-extrainfo" class="show-link hide">MOSTRAR</a></small>
+            <small><a id="hide-extrainfo" class="hide-link">ESCONDER</a></small>
             <p id="extrainfo-p" class="details-p">{{recipe.information}}</p>
         </div>
+        
+<script src="/js/home/details.js"></script>
+<script src="/js/admin/recipes/show.js"></script>
 
 {% endmacro %}
 
