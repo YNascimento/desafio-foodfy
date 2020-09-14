@@ -176,7 +176,7 @@ module.exports = {
                 await Promise.all(removedFilesPromise)
 
                 //delete from public/img
-                files.map(file => fs.unlinkSync(file.path))
+                // files.map(file => fs.unlinkSync(file.path))
             }
     
             await Recipe.update(recipeId, {
@@ -196,7 +196,19 @@ module.exports = {
 
     },
     async delete(req,res){
+
+        const files = await File.findAll({where: {recipe_id: req.body.id}})
         await Recipe.delete(req.body.id)
+
+        //remover imgs de public
+        files.map(file => {
+            try {
+                fs.unlinkSync(file.path)
+            } catch (err) {
+                console.error(err)
+            }
+        })
+
         return res.redirect('/admin/recipes')
     }
 }

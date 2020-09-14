@@ -7,6 +7,7 @@ const fs = require('fs')
 
 const loadService = require('../services/loadService')
 const {date} = require('../../lib/util')
+const { find } = require('../models/Chef')
 
 module.exports = {
     async index(req,res){
@@ -53,7 +54,7 @@ module.exports = {
     },
     async edit(req,res){
             const isAdmin = req.session.isAdmin
-            const chef = await Chef.find({where: {id: req.params.id}})
+            const chef = await Chef.find(req.params.id)
 
         try {
 
@@ -61,9 +62,9 @@ module.exports = {
                 return res.render('parts/layoutAdmin',{error: "Chef não encontrado"})
             }
     
-            chef.file = await File.find({where : {id: chef.file_id}})
+            chef.file = await File.find(chef.file_id)
             chef.file.src = `${req.protocol}://${req.headers.host}${chef.file.path.replace('public','')}`
-    
+
             return res.render('admin/chefs/edit',{chef, isAdmin})
             
         } catch (err) {
@@ -113,31 +114,30 @@ module.exports = {
                     res.send(req.body)
                 }
             }
-    
-            let chef = await Chef.find({where:{id: req.body.id}})
-            let file = await File.find({where:{id: chef.file_id}})
-            let fileId
+            let chef = await Chef.find(req.body.id)
+            let file = await File.find(chef.file_id)
+            let fileId = chef.file_id
             
             if(req.files && req.files.length != 0){
-                
-                //CHECAR E REFAZER O UNLINK PARA O FILE
-                fs.unlinkSync(file.path)
-    
-                if(req.body.removed_files){
-                    const removedFile = req.body.removed_files //receives the file_id
-                    await File.delete(removedFile)
-                }
-    
+                    
                 fileId = await File.create({
                     name: req.files[0].name,
                     path: req.files[0].path
                 })
             }
-    
+
             await Chef.update(req.body.id, {
                 name : req.body.name,
-                file_id: fileId
+                file_id: fileId 
             })
+
+            if(req.body.removed_files){
+                const removedFileId = req.body.removed_files //receives the file_id
+                const removedFile = await File.find(removedFileId)
+                fs.unlinkSync(removedFile.path)
+                
+                await File.delete(removedFileId)
+            }
     
             return res.redirect(`/admin/chefs/${req.body.id}`)
             
@@ -147,7 +147,20 @@ module.exports = {
 
     },
     async delete(req,res){
-        await Chef.delete(req.body.id)
+
+        const chef = await Chef.find(req.body.id)
+        const files = await File.findAll({where: {id: chef.file_id}})
+        await Chef.delete(chef.id)
+
+        //remover imgs de public
+        files.map(file => {
+            try {
+                fs.unlinkSync(file.path)
+            } catch (err) {
+                console.error(err)
+            }
+        })
+
         return res.redirect('/admin/chefs')
     }
 }

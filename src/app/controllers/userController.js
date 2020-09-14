@@ -106,11 +106,13 @@ module.exports = {
     },
     async adminUpdate(req,res){
         try {
-            console.log(req.body)
+            
             let {name, email, isAdmin} = req.body
             let is_admin = isAdmin == "1" ? true : false
-
+            
             await User.update(req.body.id, {name, email, is_admin})
+            
+            isAdmin = req.session.isAdmin
     
             return res.render(`admin/users/edit`, {
                 user:req.body,

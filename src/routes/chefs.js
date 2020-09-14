@@ -13,8 +13,8 @@ routes.get("/create", sessionValidator.onlyAdmin, chefController.create); // CRE
 routes.get("/:id",onlyUsers, chefController.show); // SHOW
 routes.get("/:id/edit", sessionValidator.onlyAdmin, chefController.edit); // EDIT
 
-routes.post("/", multer.array('photos',1) , chefController.post); // POST
-routes.put("/:id", multer.array('photos',1) , chefController.put); // PUT/ATT
+routes.post("/", multer.array('photo',1) , chefController.post); // POST
+routes.put("/:id", multer.array('photo',1) , chefController.put); // PUT/ATT
 routes.delete("/", chefController.delete); // DELETE
 
 module.exports = routes
